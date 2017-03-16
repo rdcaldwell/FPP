@@ -1,0 +1,51 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", sans-serif !important;
+  background-color: #f7f7f7!important;
+}
+
+a {
+  color: #3B5998;
+}
+
+.jumbotron h2 {
+  text-align: center;
+}
+
+.jumbotron h5 {
+  text-align: center;
+}
+
+.jumbotron {
+  background-color:#fff !important;
+  margin-top:10px !important;
+}
+
+.navbar {
+  background-image:none;
+  background-color: #3B5998 !important;
+}
+
+.navbar a, .nav li a {
+  color:#fff;
+}
+
+.navbar a:hover, .nav li a:hover {
+  background-color: transparent !important;
+  color: #dfe3ee !important;
+}
+
+.link {
+  stroke: #8b9dc3;
+  stroke-width: 1.5px;
+}
+
+text {
+  pointer-events: none;
+}
+
+#image img {
+  min-height:60px;
+  min-width:60px;
+  border-radius:5px;
+}
