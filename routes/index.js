@@ -200,7 +200,15 @@ module.exports = function(session) {
         graph.get(root_page_id + "?fields=id,name,likes,picture.type(large),category,website,is_published", function (err, reply) {
             if (err) {
                 var backURL = req.header('Referer') || '/';
-                res.redirect(backURL + '?error=' + encodeURIComponent("Facebook page not found"));
+                if (backURL.indexOf("error") != -1) {
+                    res.redirect(backURL);
+                }
+                else if (backURL.indexOf("?") != -1) {
+                    res.redirect(backURL + '&error=' + encodeURIComponent("Facebook page not found"));
+                }
+                else {
+                    res.redirect(backURL + '?error=' + encodeURIComponent("Facebook page not found"));
+                }
             }
 
             jsonData.graph_id = reply.id;
@@ -431,6 +439,7 @@ function getNodesAndEdges(jsonData, pages, req, res) {
         req.session.data = jsonData;
 
         res.render('render', {
+            error: req.query.error,
             title: jsonData.root.name,
             id: req.session.user_id,
             name: req.session.username,
