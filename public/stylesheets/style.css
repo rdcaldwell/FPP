@@ -1,47 +1,207 @@
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", sans-serif !important;
+  padding-top:42px;
+  font-family: "Lucida Grande", sans-serif !important;
   background-color: #f7f7f7!important;
 }
 
-a {
-  color: #3B5998;
+div.info {
+  border-radius: 0 5px 0 10px;
+  box-shadow: -5px 4px 15px #999;
+  width:25%;
+  padding: 1rem;
+  position:absolute;
+  left: 75%;
+  top: 58px;
+  margin-right: 0;
+  z-index:10;
+  background-color: rgba(255, 255, 255, 0.75);
 }
 
-.jumbotron h2 {
+.holder {
+  position:absolute;
+}
+
+.infoStuff, .infoPic {
+  display: inline-block;
+}
+
+.round {
+  border-radius: 10px;
+}
+
+.grid {
+  margin: 0 auto;
+}
+
+.grid-item.card {
+  margin-bottom:3px;
+}
+
+.card-block {
+  background-color: #f7f7f7;
+  border-radius: 0 0 5px 5px;
+}
+
+.card-block h6 {
+  color: #3B5998;
+  text-align: left !important;
+}
+
+a.btn {
+  color: #fff;
+}
+
+.render-nav > a.btn {
+  color: #fff;
+  height:50%;
+  font-size: 14px !important;
+}
+
+a.btn:hover {
+  color: #8b9dc3;
+}
+
+.btn {
+  background-color: #3B5998 !important;
+}
+
+.btn-group{
+  width: 50% !important;
+}
+
+.btn-primary {
+  background-color: #8b9dc3 !important;
+}
+
+.btn.active {
+  background-color: #3B5998 !important;
+}
+
+.card-block a{
+  color: #3B5998;
+  font-size: 24px;
+}
+
+.card-block a:hover{
+  color: #8b9dc3;
+}
+
+.btn.btn-default {
+  color: #fff;
+  border-color: #fff;
+  background-color: #8b9dc3 !important;
+}
+
+img#pagePic {
+  display:none;
+}
+
+img#pagePic[src] {
+  display: inline-block;
+}
+
+p {
+  margin-bottom: 0 !important;
+}
+.input-group > .form-control {
+  border: 1px solid #fff !important;
+}
+
+.navBlock {
+  display: block;
   text-align: center;
+}
+
+.nav-block {
+  display: block;
+  padding-left:1.5rem;
 }
 
 .jumbotron h5 {
   text-align: center;
 }
 
-.jumbotron {
-  background-color:#fff !important;
-  margin-top:10px !important;
+.btn-outline-secondary {
+  color: #8b9dc3 !important;
+  border-color: #fff !important;
 }
 
 .navbar {
-  background-image:none;
-  background-color: #3B5998 !important;
+  padding:0 !important;
 }
 
-.navbar a, .nav li a {
-  color:#fff;
+.render-nav {
+  font-size: 14px;
 }
 
-.navbar a:hover, .nav li a:hover {
-  background-color: transparent !important;
-  color: #dfe3ee !important;
+.input-group > .form-control {
+  height: 1.75rem !important;
+  width: 20rem !important;
+}
+
+.input-group-btn > .btn {
+  padding: 0rem 1rem !important;
+}
+
+.form-check-inline > .form-check-label {
+  color: #fff;
+}
+
+#graph {
+  position: relative;
+}
+
+.jumbotron.main {
+  padding: 2rem !important;
+}
+
+.jumbotron {
+  background-color:#fff !important;
+  margin-bottom:0 !important;
+  padding: 0 !important;
+}
+
+.nav-link {
+  color: #8b9dc3 !important;
+}
+
+.nav-link:hover {
+  color: #fff !important;
+}
+
+.render-nav.nav-link {
+  color: #fff !important;
 }
 
 .link {
   stroke: #8b9dc3;
-  stroke-width: 1.5px;
+  stroke-width: 2px;
 }
 
 text {
   pointer-events: none;
+  font-size:12px;
+}
+
+.icon-checkmark {
+  color: #68c15b;
+  margin-left:25px;
+  height:38px !important;
+}
+
+.icon-cross {
+  color: #d15757;
+  margin-right:15px;
+  height:42px !important;
+}
+
+.icon {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  stroke-width: 0;
+  stroke: currentColor;
+  fill: currentColor;
 }
 
 #image img {

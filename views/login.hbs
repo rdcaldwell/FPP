@@ -1,0 +1,133 @@
+<style>
+    .links line {
+        stroke: #999;
+        stroke-opacity: 0.6;
+    }
+
+    .node:hover .nodetext {
+        visibility: visible;
+    }
+
+    .node .nodetext {
+        visibility: hidden;
+    }
+</style>
+<div class="container">
+    <div class="jumbotron">
+        <a class="btn" style="z-index:10; margin:5rem 0 0 5rem; position:absolute" role="button" href="/auth">
+            <img style="height:auto; width:50px; margin-right:2em" src="../images/fb.png">Sign in with Facebook
+        </a>
+        <svg id="graph" style="opacity:.5"width="1110" height="1000">
+            <defs>
+                <clipPath id="clip">
+                    <circle id="circleClip" cx="0" cy="0"/>
+                </clipPath>
+            </defs>
+        </svg>
+    </div>
+</div>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script>
+
+    var svg = d3.select("#graph"),
+            width = +svg.attr("width"),
+            height = +svg.attr("height");
+
+    var forceStrength = 2;
+    var distance = 100;
+    var radius = 12.5;
+
+    svg.select("#circleClip")
+            .attr("r", radius);
+
+    var simulation = d3.forceSimulation()
+            .force("link", d3.forceLink().id(function (d) {
+                return d.id;
+            }).distance(distance).strength(1))
+            .force('charge', d3.forceManyBody().strength(charge))
+            .force("center", d3.forceCenter(width / 2, height / 2));
+
+    function charge(d) {
+        return -forceStrength * Math.pow(radius, 2.0);
+    }
+
+    d3.json("../json/fgcu.json", function(error, graph) {
+        if (error) throw error;
+
+        var link = svg.selectAll(".link")
+                .data(graph.links)
+                .enter().append("line")
+                .attr("class", "link");
+
+        var node = svg.append("g")
+                .attr("class", "nodes")
+                .selectAll(".node")
+                .data(graph.nodes)
+                .enter().append("g")
+                .attr("class", "node")
+                .call(d3.drag()
+                        .on("start", dragstarted)
+                        .on("drag", dragged)
+                        .on("end", dragended));
+
+        node.append("text")
+                .attr("class", "nodetext")
+                .attr("x", 0)
+                .attr("y", -radius-10)
+                .attr("dy", ".35em")
+                .attr("text-anchor", "middle")
+                .text(function(d) { return d.name; });
+
+        node.append("image")
+                .attr("xlink:href", function(d) {
+                    return d.picture;
+                })
+                .attr("x", -radius)
+                .attr("y", -radius)
+                .attr("width", radius*2)
+                .attr("height", radius*2)
+                .attr("clip-path", "url(#clip)")
+                .on( 'click', function (d) {
+                    d3.select("#pageName").html(d.name);
+                    d3.select("#pagePic").attr("src", d.picture);
+                    d3.select("#pageCategory").html(d.category);
+                    d3.select("#pageLink").html("<a href='/graph?page_id=" + d.id + "' >View " + d.name + " Graph</a>");
+                })
+
+        simulation
+                .nodes(graph.nodes)
+                .on("tick", ticked);
+
+        simulation.force("link")
+                .links(graph.links);
+
+        function ticked() {
+            link
+                    .attr("x1", function(d) { return d.source.x; })
+                    .attr("y1", function(d) { return d.source.y; })
+                    .attr("x2", function(d) { return d.target.x; })
+                    .attr("y2", function(d) { return d.target.y; });
+
+            node
+                    .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
+        }
+    });
+
+    function dragstarted(d) {
+        if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+        d.fx = d.x;
+        d.fy = d.y;
+    }
+
+    function dragged(d) {
+        d.fx = d3.event.x;
+        d.fy = d3.event.y;
+    }
+
+    function dragended(d) {
+        if (!d3.event.active) simulation.alphaTarget(0);
+        d.fx = null;
+        d.fy = null;
+    }
+
+</script>

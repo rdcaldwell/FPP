@@ -1,0 +1,305 @@
+<style>
+    .jumbotron {
+        margin-top:0 !important;
+        padding: 0 !important;
+    }
+
+    h2 a {
+        color:black !important;
+    }
+
+    .node:hover .nodetext {
+        visibility: visible;
+    }
+
+    .node .nodetext {
+        visibility: hidden;
+    }
+</style>
+
+<nav class="navbar navbar-toggleable-md" style="background-color: #8b9dc3; position:fixed; width: 100%; z-index: 99" >
+    <div class="container">
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="navbar-brand">
+            <img src="{{data.root.picture}}" class="round" width="50" height="50">
+        </div>
+        <div class="navbar-nav render-nav">
+            <div class="render-nav nav-item nav-link my-auto">
+                <span class="navBlock">{{data.root.name}}</span>
+                <span class="navBlock" style="font-size: 12px">{{data.root.category}}</span>
+            </div>
+            <div class="render-nav nav-item nav-link">
+                <span class="navBlock">Nodes</span>
+                <span class="navBlock">{{data.nodes.length}}</span>
+            </div>
+            <div class="render-nav nav-item nav-link">
+                <span class="navBlock">Edges</span>
+                <span class="navBlock">{{data.links.length}}</span>
+            </div>
+            <div class="render-nav nav-item nav-link">
+                <span class="navBlock">Depth</span>
+                <span class="navBlock">{{data.depth}}</span>
+            </div>
+            <!--<div class="nav-item nav-link">
+                <span class="navBlock">Filtered by</span>
+                <span class="navBlock"></span>
+            </div>-->
+            {{#unless isInserted}}
+                <div class="render-nav nav-item nav-link my-auto" style="padding-left:2rem">
+                    <a class="btn" href="/insert" role="button" disabled>Save graph</a>
+                </div>
+            {{/unless}}
+            {{#unless isInserted}}
+                <form class="my-auto" method="get" action="/graph/{{data.root.id}}" style="padding-left: 2rem">
+                    <fieldset class="nav-search my-auto form-group">
+                        <div class="form-check form-check-inline">
+                            <label class="form-check-label">
+                                <input id="depth1" type="radio" class="form-check-input" name="depth" value="1" onchange="this.form.submit()">
+                                Depth 1
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <label class="form-check-label">
+                                <input id="depth2" type="radio" class="form-check-input" name="depth" value="2" onchange="this.form.submit()">
+                                Depth 2
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <label class="form-check-label">
+                                <input id="category" class="form-check-input" type="checkbox" name="category" value="true" onchange="this.form.submit()">
+                                Category
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline my-auto" style="width:10rem !important;">
+                            <select class="form-control" id="likes" name="likes" onchange="this.form.submit()">
+                                <option value="" disabled selected>Likes</option>
+                                <option value="1000">1000</option>
+                                <option value="10000">10000</option>
+                                <option value="100000">100000</option>
+                                <option value="1000000">1000000</option>
+                            </select>
+                        </div>
+                    </fieldset>
+                </form>
+            {{/unless}}
+        </div>
+    </div>
+</nav>
+<div class="container" style="padding-top:58px;">
+    <div class="jumbotron" id="canvas">
+            <div class="row my-auto info">
+                <div class="col-md-2 my-auto">
+                    <img id="pagePic" class="round" width="50" height="50">
+                </div>
+                <div class="col-md-10 my-auto">
+                    <span id="pageName" class="nav-block" style="font-size: 12px">Click a node for more info</span>
+                    <span id="pageCategory" class="nav-block" style="font-size: 10px"></span>
+                    <span id="pageFanCount" class="nav-block" style="font-size: 10px"></span>
+                    <span id="pageLink" class="nav-block" style="font-size: 10px"></span>
+                </div>
+            </div>
+        <svg id="graph">
+            <defs>
+                <clipPath id="clip">
+                    <circle id="circleClip" cx="0" cy="0"/>
+                </clipPath>
+            </defs>
+        </svg>
+    </div>
+</div>
+<script>
+    var success = "{{success}}";
+    var error = "{{save_error}}";
+
+    if (success != "")
+        alert(success);
+    else if (error != "")
+        alert(error);
+
+    var depth = {{data.depth}};
+
+    if (depth == 1) {
+        document.getElementById("depth1").checked = true;
+
+        // Uncheck
+        document.getElementById("depth2").checked = false;
+    }
+    else if (depth == 2) {
+        document.getElementById("depth2").checked = true;
+
+        // Uncheck
+        document.getElementById("depth1").checked = false;
+    }
+
+</script>
+<script>
+    var category = {{data.category}};
+
+    if (category) {
+        document.getElementById("category").checked = true;
+    }
+</script>
+<script>
+    var likes = {{data.likes}};
+    if (likes == 1000) {
+        document.getElementById("likes").options[1].selected = true;
+    }
+    else if (likes == 10000) {
+        document.getElementById("likes").options[2].selected = true;
+    }
+    else if (likes == 100000) {
+        document.getElementById("likes").options[3].selected = true;
+    }
+    else if (likes == 100000) {
+        document.getElementById("likes").options[4].selected = true;
+    }
+</script>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script>
+    /**
+     * Created by ronniecaldwell on 4/7/17.
+     */
+    var graph = {{{dataString}}};
+    var nodes = {{{data.nodes.length}}};
+    var width = document.getElementById('canvas').offsetWidth;
+    var height = 750;
+    var forceStrength = 3;
+    var distance = 100;
+    var radius = 30;
+
+    if (nodes > 250) {
+        distance = 20;
+        radius = 10;
+        height = 1250;
+
+    }
+    else if (nodes > 100) {
+        distance = 50;
+        radius = 12.5;
+        height = 1250;
+
+    }
+    else if (nodes > 35) {
+        distance = 150;
+        radius = 15;
+        height = 1000;
+    }
+
+    var svg = d3.select("#graph").attr("width", width).attr("height", height);
+
+    svg.select("#circleClip").attr("r", radius);
+
+    var simulation = d3.forceSimulation()
+            .force("link", d3.forceLink().id(function (d) {
+                return d.id;
+            }).distance(distance).strength(1))
+            .force('charge', d3.forceManyBody().strength(charge))
+            .force("center", d3.forceCenter(width / 2, height / 2));
+
+    function charge(d) {
+        return -forceStrength * Math.pow(radius, 2.0);
+    }
+
+    var link = svg.selectAll(".link")
+            .data(graph.links)
+            .enter().append("line")
+            .attr("class", "link");
+
+    var node = svg.append("g")
+            .attr("class", "nodes")
+            .selectAll(".node")
+            .data(graph.nodes)
+            .enter().append("g")
+            .attr("class", "node")
+            .call(d3.drag()
+                    .on("start", dragstarted)
+                    .on("drag", dragged)
+                    .on("end", dragended))
+                    .on("click", fade(.1))
+                    .on("dblclick", fade(1));
+
+    node.append("text")
+            .attr("class", "nodetext")
+            .attr("x", 0)
+            .attr("y", -radius-10)
+            .attr("dy", ".35em")
+            .attr("text-anchor", "middle")
+            .text(function(d) { return d.name; });
+
+    node.append("image")
+            .attr("xlink:href", function(d) {
+                return d.picture;
+            })
+            .attr("x", -radius)
+            .attr("y", -radius)
+            .attr("width", radius*2)
+            .attr("height", radius*2)
+            .attr("clip-path", "url(#clip)")
+            .on( 'click', function (d) {
+                d3.select("#pageName").html(d.name);
+                d3.select("#pagePic").attr("src", d.picture);
+                d3.select("#pageCategory").html(d.category);
+                d3.select("#pageFanCount").html("Fan count: " + d.fan_count);
+                d3.select("#pageLink").html("<a href='/graph?page_id=" + d.id + "' >View " + d.name + " Graph</a>");
+            })
+
+    simulation.nodes(graph.nodes).on("tick", ticked);
+    simulation.force("link").links(graph.links);
+
+    function ticked() {
+        node.attr("cx", function(d) {
+            return d.x = Math.max(radius, Math.min(width - radius, d.x));
+        }).attr("cy", function(d) {
+            return d.y = Math.max(radius, Math.min(height - radius, d.y));
+        });
+
+        link.attr("x1", function(d) { return d.source.x; })
+            .attr("y1", function(d) { return d.source.y; })
+            .attr("x2", function(d) { return d.target.x; })
+            .attr("y2", function(d) { return d.target.y; });
+
+        node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
+    }
+
+    function dragstarted(d) {
+        if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+        d.fx = d.x;
+        d.fy = d.y;
+    }
+
+    function dragged(d) {
+        d.fx = d3.event.x;
+        d.fy = d3.event.y;
+    }
+
+    function dragended(d) {
+        if (!d3.event.active) simulation.alphaTarget(0);
+        d.fx = null;
+        d.fy = null;
+    }
+
+    var linkedByIndex = {};
+    graph.links.forEach(function(d) {
+        linkedByIndex[d.source.index + "," + d.target.index] = 1;
+    });
+
+    function isConnected(a, b) {
+        return linkedByIndex[a.index + "," + b.index] || linkedByIndex[b.index + "," + a.index] || a.index == b.index;
+    }
+
+    function fade(opacity) {
+        return function(d) {
+            node.style("stroke-opacity", function(o) {
+                thisOpacity = isConnected(d, o) ? 1 : opacity;
+                this.setAttribute('opacity', thisOpacity);
+                return thisOpacity;
+            });
+
+            link.style("stroke-opacity", function(o) {
+                return o.source === d || o.target === d ? 1 : opacity;
+            });
+        };
+    }
+</script>
