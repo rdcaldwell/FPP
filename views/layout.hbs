@@ -39,6 +39,7 @@
         </symbol>
     </defs>
 </svg>
+<!-- Main navbar -->
 <nav class="navbar navbar-toggleable-md fixed-top navbar-inverse" style="background-color: #3B5998">
     <div class="container">
         <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,6 +49,7 @@
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
+                <!-- If/else for user representation -->
                 {{#if id}}
                     <li class="nav-item">
                         <a class="nav-link" href="/search">Advanced Search</a>
@@ -61,10 +63,12 @@
                     </li>
                 {{/if}}
             </ul>
+            <!-- If there is an error in the search query -->
             {{#if error}}
                 <svg class="icon icon-cross"><use xlink:href="#icon-cross"></use></svg>
             {{/if}}
             {{#if id}}
+            <!-- Navbar search -->
             <form class="form-inline my-2 my-lg-0" method="get" action="/graph">
                 <div class="input-group">
                     <input type="text" name="page_id" class="form-control">
@@ -79,7 +83,6 @@
         </div>
     </div>
 </nav>
-
 
 {{{body}}}
 

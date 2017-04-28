@@ -34,6 +34,7 @@ app.use(session({
 }));
 app.use('/', index);
 
+// Connects to local FPP MongoDB database
 mongoose.connect('mongodb://localhost:27017/fpp');
 
 // catch 404 and forward to error handler
@@ -58,8 +59,10 @@ process.on('uncaughtException', function (err) {
     console.log(err);
 });
 
+// Sets port
 var port = process.env.PORT || 3000;
 
+// Server
 app.listen(port, function() {
     console.log("Express server listening on port %d", port);
 });

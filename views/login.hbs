@@ -14,9 +14,11 @@
 </style>
 <div class="container">
     <div class="jumbotron">
+        <!-- login button -->
         <a class="btn" style="z-index:10; margin:5rem 0 0 5rem; position:absolute" role="button" href="/auth">
             <img style="height:auto; width:50px; margin-right:2em" src="../images/fb.png">Sign in with Facebook
         </a>
+        <!-- where graph is rendered -->
         <svg id="graph" style="opacity:.5"width="1110" height="1000">
             <defs>
                 <clipPath id="clip">
@@ -28,7 +30,7 @@
 </div>
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script>
-
+    // Very similar to script in render template. Used to render FGCU graph on login page from generated JSON file
     var svg = d3.select("#graph"),
             width = +svg.attr("width"),
             height = +svg.attr("height");

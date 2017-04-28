@@ -19,6 +19,7 @@
 
 <nav class="navbar navbar-toggleable-md" style="background-color: #8b9dc3; position:fixed; width: 100%; z-index: 99" >
     <div class="container">
+        <!-- Seondary navbar -->
         <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -74,11 +75,12 @@
                         </div>
                         <div class="form-check form-check-inline my-auto" style="width:10rem !important;">
                             <select class="form-control" id="likes" name="likes" onchange="this.form.submit()">
-                                <option value="" disabled selected>Likes</option>
-                                <option value="1000">1000</option>
-                                <option value="10000">10000</option>
-                                <option value="100000">100000</option>
-                                <option value="1000000">1000000</option>
+                                <option value="" disabled>Likes</option>
+                                <option value="0">0 Likes</option>
+                                <option value="1000">1000 Likes</option>
+                                <option value="10000">10000 Likes</option>
+                                <option value="100000">100000 Likes</option>
+                                <option value="1000000">1000000 Likes</option>
                             </select>
                         </div>
                     </fieldset>
@@ -89,19 +91,22 @@
 </nav>
 <div class="container" style="padding-top:58px;">
     <div class="jumbotron" id="canvas">
-            <div class="row my-auto info">
-                <div class="col-md-2 my-auto">
-                    <img id="pagePic" class="round" width="50" height="50">
-                </div>
-                <div class="col-md-10 my-auto">
-                    <span id="pageName" class="nav-block" style="font-size: 12px">Click a node for more info</span>
-                    <span id="pageCategory" class="nav-block" style="font-size: 10px"></span>
-                    <span id="pageFanCount" class="nav-block" style="font-size: 10px"></span>
-                    <span id="pageLink" class="nav-block" style="font-size: 10px"></span>
-                </div>
+        <div class="row my-auto info">
+            <div class="col-md-2 my-auto">
+                <img id="pagePic" class="round" width="50" height="50">
             </div>
+            <!-- Dynamically added using javascript -->
+            <div class="col-md-10 my-auto">
+                <span id="pageName" class="nav-block" style="font-size: 12px">Click a node for more info</span>
+                <span id="pageCategory" class="nav-block" style="font-size: 10px"></span>
+                <span id="pageFanCount" class="nav-block" style="font-size: 10px"></span>
+                <span id="pageLink" class="nav-block" style="font-size: 10px"></span>
+            </div>
+        </div>
+        <!-- Where graph is rendered -->
         <svg id="graph">
             <defs>
+                <!-- clipPath that makes the nodes circular -->
                 <clipPath id="clip">
                     <circle id="circleClip" cx="0" cy="0"/>
                 </clipPath>
@@ -110,6 +115,7 @@
     </div>
 </div>
 <script>
+    // Creates alert pop ups
     var success = "{{success}}";
     var error = "{{save_error}}";
 
@@ -118,6 +124,7 @@
     else if (error != "")
         alert(error);
 
+    // Sets the depth radio buttons
     var depth = {{data.depth}};
 
     if (depth == 1) {
@@ -137,23 +144,28 @@
 <script>
     var category = {{data.category}};
 
+    // Checks the category checkbox
     if (category) {
         document.getElementById("category").checked = true;
     }
 </script>
 <script>
+    // Selects the appropriate likes in the selector
     var likes = {{data.likes}};
-    if (likes == 1000) {
-        document.getElementById("likes").options[1].selected = true;
+    if (likes == 0) {
+        document.getElementById("likes").options[0].selected = true;
     }
-    else if (likes == 10000) {
+    if (likes == 1000) {
         document.getElementById("likes").options[2].selected = true;
     }
-    else if (likes == 100000) {
+    else if (likes == 10000) {
         document.getElementById("likes").options[3].selected = true;
     }
     else if (likes == 100000) {
         document.getElementById("likes").options[4].selected = true;
+    }
+    else if (likes == 1000000) {
+        document.getElementById("likes").options[5].selected = true;
     }
 </script>
 <script src="https://d3js.org/d3.v4.min.js"></script>
@@ -169,6 +181,7 @@
     var distance = 100;
     var radius = 30;
 
+    // Alters the size of the nodes and container based on amount of nodes
     if (nodes > 250) {
         distance = 20;
         radius = 10;
@@ -187,10 +200,12 @@
         height = 1000;
     }
 
+    // Selects the svg graph id in the html
     var svg = d3.select("#graph").attr("width", width).attr("height", height);
 
     svg.select("#circleClip").attr("r", radius);
 
+    // Initialize d3
     var simulation = d3.forceSimulation()
             .force("link", d3.forceLink().id(function (d) {
                 return d.id;
@@ -202,11 +217,13 @@
         return -forceStrength * Math.pow(radius, 2.0);
     }
 
+    // Links
     var link = svg.selectAll(".link")
             .data(graph.links)
             .enter().append("line")
             .attr("class", "link");
 
+    // Nodes
     var node = svg.append("g")
             .attr("class", "nodes")
             .selectAll(".node")
@@ -220,6 +237,7 @@
                     .on("click", fade(.1))
                     .on("dblclick", fade(1));
 
+    // Adds text to nodes
     node.append("text")
             .attr("class", "nodetext")
             .attr("x", 0)
@@ -228,6 +246,7 @@
             .attr("text-anchor", "middle")
             .text(function(d) { return d.name; });
 
+    // Adds image to nodes
     node.append("image")
             .attr("xlink:href", function(d) {
                 return d.picture;
@@ -281,14 +300,18 @@
     }
 
     var linkedByIndex = {};
+
+    // Used to make a connection between a source and it's targets
     graph.links.forEach(function(d) {
         linkedByIndex[d.source.index + "," + d.target.index] = 1;
     });
 
+    // Makes a connection between a source and it's targets
     function isConnected(a, b) {
         return linkedByIndex[a.index + "," + b.index] || linkedByIndex[b.index + "," + a.index] || a.index == b.index;
     }
 
+    // Changes all other nodes/links in the graph opacity except for the nodes/links in the linkedByIndex object
     function fade(opacity) {
         return function(d) {
             node.style("stroke-opacity", function(o) {

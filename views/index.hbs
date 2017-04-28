@@ -1,16 +1,20 @@
 <div class="container">
     <div class="jumbotron main">
+        <!-- Masonry.js grid showing each graph in the users list -->
         <div class="grid" data-masonry='{ "itemSelector": ".grid-item", "columnWidth": 50, "rowHeight": 300, "fitWidth": true }'>
             {{#each graphs}}
                 <div class="grid-item card">
                     <div style="overflow: hidden; max-width: 400px;">
+                        <!-- remove button -->
                         <a style="position:absolute; z-index:99; color: #3B5998; padding:.5rem .5rem 0 .5rem" href="/remove/{{graph_id}}" data-toggle="tooltip" data-placement="bottom" title="Delete"><svg class="icon icon-cancel-circle"><use xlink:href="#icon-cancel-circle"></use></svg></a>
+                        <!-- iframe showing graph -->
                         <iframe scrolling="no" src="/render/{{graph_id}}" style="transform: scale(0.8);  border: 0px none; margin-left: -795px; margin-right: -830px; margin-top: -90%;margin-bottom: -90%; height: 1080px;  width: 1920px;">
                         </iframe>
                     </div>
                     <!--<img class="card-img-top" style="height:300px; width:auto;" src="{{graph_picture}}" alt="Card image cap">-->
                     <div class="card-block">
                         <div class="text-left">
+                            <!-- view button -->
                             <p><a style="font-size: 18px;" href="/render/{{graph_id}}" data-toggle="tooltip" data-placement="bottom" title="View">{{root.name}}</a></p>
                         </div>
                     </div>
